@@ -1,35 +1,48 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import "./app.css";
 
-function App() {
-  const [count, setCount] = useState(0)
+export function App() {
+  const [weather, setWeather] = useState();
+  const cityName = "Rio de Janeiro";
+  const url = `https://api.weatherstack.com/historical?access_key=86951229b559f3658b8840775cbe6976&query=${cityName}`;
+  const options = { method: "GET" };
+
+  async function handleWeather() {
+    try {
+      const response = await fetch(url, options);
+      const result = await response.text();
+      setWeather(result);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    handleWeather();
+  }, []);
+
+  console.log(weather);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="container">
+      <div className="container-box">
+        <strong className="weather-local">
+          Nilópolis, Rio de Janeiro, Brasil
+        </strong>
+        <div className="content-weather">
+          <img src={weather} alt="weather-image" className="weather-image" />
+          <span className="weather-temperature">{weather?.temperature}ºc</span>
+          <div className="weather-info">
+            <span className="weather-details">Wind: {weather?.wind} kmph</span>
+            <span className="weather-details">
+              Precip: {weather?.precip} mm
+            </span>
+            <span className="weather-details">
+              Pressure: {weather?.pressure} mb
+            </span>
+          </div>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
-
-export default App
